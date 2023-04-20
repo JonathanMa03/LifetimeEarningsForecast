@@ -1,0 +1,31 @@
+import numpy as np
+import pandas as pd
+from statsmodels.tsa.holtwinters import ExponentialSmoothing
+
+# Define the input data as a pandas series
+earnings = pd.Series([65000, 66500, 67000, 67000, 67200, 67500, 67500, 68000, 70000])
+
+# Create an Exponential Smoothing model with additive trend and seasonal components
+model = ExponentialSmoothing(earnings, trend="add", seasonal="add", seasonal_periods=4)
+
+# Fit the model to the data
+fit = model.fit()
+
+# Make a forecast for the next n periods (i.e. 40 years)
+forecast = fit.forecast(40)
+
+# Print the forecasted earnings for each of the next n periods
+for i, val in enumerate(forecast):
+    print(f"Year {i+1}: {int(val)}")
+
+# Define a function to calculate cumulative earnings
+def calculate_cumulative_earnings(earnings, forecast):
+    cumulative_earnings = [sum(earnings)]
+    for i, val in enumerate(forecast):
+        cumulative_earnings.append(cumulative_earnings[-1] + int(val))
+    return cumulative_earnings
+
+# Call the function to calculate cumulative earnings
+cumulative_earnings = calculate_cumulative_earnings(earnings, forecast)
+print("Total Lifetime Earnings:")
+print(sum(cumulative_earnings))
